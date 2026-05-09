@@ -22,23 +22,28 @@
       --stepPlay: #ffd166;
       --shadow: 0 12px 30px rgba(0, 0, 0, .35);
       --radius: 18px;
+      --radius2: 12px;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     html, body {
       height: 100%;
       background: linear-gradient(180deg, #0d1015, #11151b 45%, #0b0d12);
       color: var(--text);
-      font-family: 'Inter', 'Segoe UI', sans-serif;
+      font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
       overflow: hidden;
     }
     button, input, select { font: inherit; }
-    .app { display: grid; grid-template-rows: 64px 1fr; height: 100vh; }
+    .app {
+      display: grid;
+      grid-template-rows: 64px 1fr auto;
+      height: 100vh;
+    }
     .topbar {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 10px 18px;
-      background: rgba(14, 18, 24, 0.9);
+      padding: 10px 16px;
+      background: rgba(14, 18, 24, .92);
       backdrop-filter: blur(10px);
       border-bottom: 1px solid var(--line);
       z-index: 10;
@@ -55,7 +60,12 @@
       height: 38px;
       border-radius: 12px;
       background: radial-gradient(circle at 30% 30%, #fff, #ffb84d 22%, #f97316 45%, #8a2be2 100%);
-      box-shadow: 0 0 28px rgba(255, 159, 28, .35);
+      box-shadow: 0 0 28px rgba(255,159,28,.35);
+      animation: logoPulse 3s infinite;
+    }
+    @keyframes logoPulse {
+      0%,100%{ box-shadow: 0 0 28px rgba(255,159,28,.35); }
+      50%{ box-shadow: 0 0 42px rgba(255,159,28,.6); }
     }
     .brand small { display: block; color: var(--muted); font-weight: 600; }
     .top-controls {
@@ -65,7 +75,7 @@
       flex-wrap: wrap;
       justify-content: flex-end;
     }
-    .btn, .tab {
+    .btn, .chip, .tab, .toggle {
       border: 1px solid var(--line);
       background: linear-gradient(180deg, #232b38, #1a202a);
       color: var(--text);
@@ -73,14 +83,26 @@
       padding: 9px 12px;
       cursor: pointer;
       box-shadow: var(--shadow);
-      transition: 0.15s;
+      transition: .15s transform, .15s border-color, .15s background;
       white-space: nowrap;
+      user-select: none;
       font-size: 13px;
       font-weight: 600;
     }
     .btn:hover, .tab:hover { transform: translateY(-1px); border-color: #3d4b60; }
-    .btn.primary { background: linear-gradient(180deg, #ffb84d, #f97316); color: #1c1306; font-weight: 800; border-color: #ff9f1c; }
-    .btn.danger { background: linear-gradient(180deg, #ff6b81, #e11d48); color: white; }
+    .btn:active, .tab:active { transform: scale(.96); }
+    .btn.primary {
+      background: linear-gradient(180deg, #ffb84d, #f97316);
+      color: #1c1306;
+      font-weight: 800;
+      border-color: #ff9f1c;
+    }
+    .btn.danger {
+      background: linear-gradient(180deg, #ff6b81, #e11d48);
+      color: white;
+      border-color: #e11d48;
+    }
+    .btn.ghost { background: linear-gradient(180deg, #1b2028, #151a21); }
     .pill {
       display: flex;
       align-items: center;
@@ -88,23 +110,31 @@
       border: 1px solid var(--line);
       background: #141923;
       border-radius: 999px;
-      padding: 7px 10px;
+      padding: 7px 12px;
       min-width: 120px;
       box-shadow: var(--shadow);
     }
     .pill label { color: var(--muted); font-size: 12px; }
     .pill input[type=range] { width: 80px; accent-color: #ff9f1c; }
-    .pill select { background: #1a202a; color: var(--text); border: 1px solid var(--line); border-radius: 8px; padding: 4px 8px; }
+    .pill select {
+      background: #1a202a;
+      color: var(--text);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 4px 8px;
+    }
     .pill b { min-width: 32px; text-align: center; }
+
     .main {
       display: grid;
-      grid-template-columns: 280px 1fr 280px;
+      grid-template-columns: 270px 1fr 270px;
       gap: 12px;
       padding: 12px;
       min-height: 0;
+      overflow: hidden;
     }
     .panel {
-      background: linear-gradient(180deg, rgba(25, 30, 39, .94), rgba(18, 22, 29, .96));
+      background: linear-gradient(180deg, rgba(25,30,39,.94), rgba(18,22,29,.96));
       border: 1px solid var(--line);
       border-radius: var(--radius);
       box-shadow: var(--shadow);
@@ -112,17 +142,23 @@
       flex-direction: column;
       overflow: hidden;
     }
+    .sidebar { display: grid; grid-template-rows: auto 1fr auto; }
     .panel-head {
       padding: 12px 14px;
       border-bottom: 1px solid var(--line);
       display: flex;
       align-items: center;
       justify-content: space-between;
-      background: rgba(255, 255, 255, .02);
-      font-weight: 600;
+      gap: 10px;
+      background: rgba(255,255,255,.02);
+      flex-shrink: 0;
     }
-    .sidebar { display: grid; grid-template-rows: auto 1fr auto; }
-    .browser { padding: 12px; overflow-y: auto; flex: 1; }
+    .panel-head h3 { margin: 0; font-size: 14px; letter-spacing: .5px; text-transform: uppercase; }
+    .browser {
+      padding: 12px;
+      overflow-y: auto;
+      flex: 1;
+    }
     .browser .item {
       padding: 10px 12px;
       border: 1px solid var(--line);
@@ -130,112 +166,172 @@
       margin-bottom: 10px;
       background: #161b24;
       cursor: pointer;
+      transition: .15s border-color, .15s background;
     }
-    .browser .item:hover { border-color: #ff9f1c; }
-    .sidebar-foot { padding: 12px; border-top: 1px solid var(--line); display: grid; gap: 8px; }
-    .small-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .browser .item:hover { border-color: #ff9f1c; background: #1c2230; }
+    .browser .item b { display: block; margin-bottom: 4px; }
+    .browser .item span { color: var(--muted); font-size: 12px; }
+    .sidebar-foot {
+      padding: 12px;
+      border-top: 1px solid var(--line);
+      display: grid;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+    .small-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
     .content { display: grid; grid-template-rows: auto 1fr; gap: 12px; min-width: 0; min-height: 0; }
-    .tabs { display: flex; gap: 8px; flex-wrap: wrap; }
-    .tab.active { border-color: #ff9f1c; background: linear-gradient(180deg, #303445, #232836); }
-    .workspace { flex: 1; overflow: hidden; }
-    .view { display: none; flex-direction: column; height: 100%; }
+    .tabs { display: flex; gap: 8px; flex-wrap: wrap; flex-shrink: 0; }
+    .tab.active {
+      border-color: #ff9f1c;
+      background: linear-gradient(180deg, #303445, #232836);
+      color: #fff;
+      font-weight: 700;
+    }
+    .workspace { min-height: 0; flex: 1; overflow: hidden; display: flex; flex-direction: column; }
+    .view { display: none; min-height: 0; height: 100%; flex-direction: column; }
     .view.active { display: flex; }
-    .rack { overflow-y: auto; padding: 12px; flex: 1; display: grid; gap: 10px; }
+    .rack { overflow-y: auto; padding: 12px; display: grid; gap: 10px; flex: 1; }
     .channel {
       display: grid;
       grid-template-columns: 200px 1fr 130px;
       gap: 10px;
+      align-items: stretch;
       background: #141923;
       border: 1px solid var(--line);
       border-radius: 16px;
       padding: 10px;
     }
-    .steps { display: grid; grid-template-columns: repeat(16, 1fr); gap: 4px; }
+    .chan-info { display: grid; gap: 6px; align-content: start; }
+    .chan-title { display: flex; align-items: center; gap: 6px; justify-content: space-between; }
+    .chan-title input {
+      width: 110px;
+      background: #0f1319;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 7px 10px;
+      color: var(--text);
+      font-weight: 600;
+    }
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(16, 1fr);
+      gap: 4px;
+      align-content: start;
+    }
     .step {
       aspect-ratio: 1;
       background: var(--step);
       border-radius: 6px;
       border: 1px solid #364355;
       cursor: pointer;
+      position: relative;
+      transition: .1s;
+      min-width: 22px;
     }
     .step.on { background: linear-gradient(180deg, #ffb84d, #f97316); border-color: #ffd166; }
-    .step.playing { outline: 2px solid var(--stepPlay); }
-    .playlist { padding: 12px; overflow-y: auto; flex: 1; }
-    .clip {
-      background: #1e2530;
-      border: 1px solid var(--line);
-      border-radius: 8px;
-      padding: 8px 12px;
-      margin-bottom: 6px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    .clip.audio { background: #1d3a40; }
-    .piano-wrap { padding: 12px; flex: 1; overflow: auto; }
-    .piano-canvas {
+    .step.playing { outline: 2px solid var(--stepPlay); box-shadow: 0 0 0 3px rgba(255,209,102,.25); }
+    .mini { color: var(--muted); font-size: 11px; }
+    .playlist { overflow: auto; padding: 12px; flex: 1; }
+    .grid-wrap {
       position: relative;
-      min-width: 900px;
-      height: 400px;
+      min-width: 1000px;
+      min-height: 400px;
       border: 1px solid var(--line);
       border-radius: 16px;
-      background: #0f1319;
-      margin-top: 8px;
+      background: linear-gradient(180deg, #10151d, #0f1319);
     }
-    .keys { position: absolute; left: 0; top: 0; width: 80px; bottom: 0; background: #11161d; border-right: 1px solid var(--line); }
-    .key { height: 25px; border-bottom: 1px solid rgba(255,255,255,.05); display: flex; align-items: center; padding-left: 6px; font-size: 10px; color: #cfd7e6; }
-    .pgrid {
+    .grid-lines {
       position: absolute;
-      left: 80px;
-      top: 0;
-      right: 0;
-      bottom: 0;
+      inset: 0;
+      background-image: linear-gradient(to right, rgba(255,255,255,.06) 1px, transparent 1px),
+                        linear-gradient(to bottom, rgba(255,255,255,.06) 1px, transparent 1px);
+      background-size: 64px 1px, 1px 64px;
+      opacity: .7;
+      pointer-events: none;
+    }
+    .track-labels {
+      position: absolute; left: 0; top: 0; width: 110px; height: 100%;
+      border-right: 1px solid var(--line); background: rgba(18,22,29,.95); z-index: 2;
+    }
+    .track-label {
+      height: 64px; display: flex; align-items: center; padding: 0 12px;
+      border-bottom: 1px solid rgba(255,255,255,.06); color: #dce5f3; font-weight: 600; font-size: 13px;
+    }
+    .clips { position: absolute; left: 110px; top: 0; right: 0; bottom: 0; z-index: 1; }
+    .clip {
+      position: absolute; height: 52px; border-radius: 12px; border: 1px solid rgba(255,255,255,.16);
+      padding: 8px 12px; font-size: 12px; font-weight: 700; box-shadow: 0 8px 18px rgba(0,0,0,.24);
+      display: flex; align-items: center; justify-content: space-between; gap: 8px;
+      cursor: pointer; transition: .1s filter; user-select: none;
+    }
+    .clip.pattern { background: linear-gradient(135deg, rgba(255,159,28,.9), rgba(249,115,22,.7)); }
+    .clip.audio { background: linear-gradient(135deg, rgba(76,201,240,.9), rgba(59,130,246,.7)); }
+    .clip .x { cursor: pointer; opacity: .75; font-size: 16px; padding: 2px 6px; border-radius: 50%; background: rgba(0,0,0,.2); }
+    .piano-view, .mixer-view { display: none; flex-direction: column; }
+    .piano-view.active, .mixer-view.active { display: flex; }
+    .piano-wrap { padding: 12px; overflow: auto; flex: 1; }
+    .piano-canvas { position: relative; min-width: 900px; height: 480px; border: 1px solid var(--line); border-radius: 16px; background: #0f1319; overflow: hidden; margin-top: 10px; }
+    .keys { position: absolute; left: 0; top: 0; width: 80px; bottom: 0; background: #11161d; border-right: 1px solid var(--line); z-index: 2; }
+    .key { height: 28px; border-bottom: 1px solid rgba(255,255,255,.05); display: flex; align-items: center; padding-left: 6px; font-size: 10px; color: #cfd7e6; }
+    .pgrid {
+      position: absolute; left: 80px; top: 0; right: 0; bottom: 0;
       background-image: linear-gradient(to right, rgba(255,255,255,.04) 1px, transparent 1px),
                         linear-gradient(to bottom, rgba(255,255,255,.04) 1px, transparent 1px);
-      background-size: 40px 1px, 1px 25px;
+      background-size: 32px 1px, 1px 28px; cursor: crosshair;
     }
     .note {
-      position: absolute;
-      height: 22px;
-      border-radius: 4px;
-      background: var(--good);
-      border: 1px solid white;
-      cursor: pointer;
-      font-size: 9px;
-      display: flex;
-      align-items: center;
-      padding: 0 4px;
+      position: absolute; height: 24px; border-radius: 6px; border: 1px solid rgba(255,255,255,.2);
+      background: linear-gradient(135deg, #34d399, #10b981); box-shadow: 0 6px 14px rgba(0,0,0,.25);
+      cursor: pointer; display: flex; align-items: center; padding: 0 6px; font-size: 10px; font-weight: 700; color: #fff;
     }
-    .mixer { padding: 12px; overflow-x: auto; display: flex; gap: 8px; }
+    .mixer { padding: 12px; overflow: auto; flex: 1; }
+    .mixer-strip-wrap { display: flex; gap: 10px; min-width: 900px; align-items: flex-end; }
     .strip {
-      width: 80px;
-      background: #12171f;
-      border: 1px solid var(--line);
-      border-radius: 18px;
-      padding: 10px;
-      display: grid;
-      gap: 10px;
-      justify-items: center;
+      width: 80px; background: #12171f; border: 1px solid var(--line); border-radius: 18px;
+      padding: 10px; display: grid; gap: 8px; justify-items: center;
     }
-    .meter { width: 14px; height: 120px; background: #0b0f14; border-radius: 999px; position: relative; overflow: hidden; }
-    .meter span { position: absolute; left: 0; bottom: 0; width: 100%; background: linear-gradient(180deg, #34d399, #f59e0b, #ef4444); border-radius: 999px; transition: height .06s; }
-    .fader { writing-mode: bt-lr; appearance: slider-vertical; width: 18px; height: 120px; accent-color: #ff9f1c; }
-    .right-panel .panel-body { padding: 12px; overflow-y: auto; flex: 1; display: grid; gap: 10px; }
-    .audio-manager { padding: 12px; overflow-y: auto; }
-    .audio-item { padding: 8px; border: 1px solid var(--line); border-radius: 8px; background: #1a1f2b; margin-bottom: 6px; display: flex; justify-content: space-between; align-items: center; }
-    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.7); display: none; align-items: center; justify-content: center; z-index: 100; }
+    .strip.master { background: linear-gradient(180deg, #1b2230, #12161e); border-color: #ff9f1c; }
+    .meter { width: 14px; height: 140px; background: #0b0f14; border-radius: 999px; border: 1px solid #314058; position: relative; overflow: hidden; }
+    .meter span { position: absolute; left: 0; bottom: 0; width: 100%; background: linear-gradient(180deg, #34d399, #f59e0b, #ef4444); border-radius: 999px; transition: height .08s; }
+    .fader { writing-mode: bt-lr; appearance: slider-vertical; -webkit-appearance: slider-vertical; width: 18px; height: 140px; accent-color: #ff9f1c; }
+    .right-panel .panel-body { padding: 12px; display: grid; gap: 10px; overflow-y: auto; flex: 1; }
+    .right-panel .item { padding: 10px 12px; border: 1px solid var(--line); border-radius: 14px; background: #161b24; }
+    .footer-note { padding: 6px 14px; color: var(--muted); font-size: 11px; border-top: 1px solid var(--line); background: rgba(255,255,255,.02); text-align: center; }
+    .modal-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,.7); backdrop-filter: blur(4px);
+      display: none; align-items: center; justify-content: center; z-index: 100;
+    }
     .modal-overlay.active { display: flex; }
-    .modal { background: #1a202a; padding: 24px; border-radius: 20px; border: 1px solid var(--line); min-width: 320px; }
-    @media (max-width: 1100px) { .main { grid-template-columns: 240px 1fr; } .right-panel { display: none; } }
+    .modal {
+      background: #1a202a; border: 1px solid var(--line); border-radius: 20px;
+      padding: 24px; min-width: 320px; box-shadow: var(--shadow);
+    }
+    @media (max-width: 1100px) {
+      .main { grid-template-columns: 240px 1fr; }
+      .right-panel { display: none; }
+    }
+    @media (max-width: 800px) {
+      .main { grid-template-columns: 1fr; overflow-y: auto; }
+      .sidebar { display: none; }
+      .channel { grid-template-columns: 1fr; }
+    }
   </style>
 </head>
 <body>
 <div class="app">
   <div class="topbar">
-    <div class="brand"><div class="logo"></div><div>ITS.Vermeer Studio<small>Web DAW</small></div></div>
+    <div class="brand">
+      <div class="logo"></div>
+      <div>ITS.Vermeer Studio<small>Web DAW</small></div>
+    </div>
     <div class="top-controls">
       <button class="btn primary" id="playBtn">▶ Play</button>
       <button class="btn" id="stopBtn">■ Stop</button>
+      <button class="btn ghost" id="recordBtn">● Arm</button>
       <div class="pill"><label>BPM</label><input id="bpm" type="range" min="60" max="180" value="128"><b id="bpmVal">128</b></div>
       <div class="pill"><label>Bars</label><select id="bars"><option>1</option><option selected>2</option><option>4</option><option>8</option></select></div>
       <button class="btn" id="addChannelBtn">+ Channel</button>
@@ -246,31 +342,27 @@
     </div>
   </div>
 
+  <!-- Main layout -->
   <div class="main">
-    <!-- Left Sidebar: Browser + Audio Manager -->
+    <!-- Left Sidebar (Browser) -->
     <aside class="panel sidebar">
-      <div class="panel-head">Browser</div>
+      <div class="panel-head"><h3>Browser</h3><span class="mini">Add sounds</span></div>
       <div class="browser" id="browser">
-        <div class="item" data-type="channel" data-name="Kick"><b>🥁 Kick</b></div>
-        <div class="item" data-type="channel" data-name="Snare"><b>🥁 Snare</b></div>
-        <div class="item" data-type="channel" data-name="Hi-Hat"><b>🥁 Hi-Hat</b></div>
-        <div class="item" data-type="channel" data-name="Bass"><b>🎸 Bass</b></div>
-        <div class="item" data-type="channel" data-name="Lead"><b>🎹 Lead</b></div>
-      </div>
-      <div style="padding:12px; border-top:1px solid var(--line);">
-        <div style="font-weight:600; margin-bottom:8px;">🎵 Imported Audio</div>
-        <div class="audio-manager" id="audioManager">
-          <div style="color:var(--muted); font-size:12px;">No audio imported</div>
-        </div>
+        <div class="item" data-type="channel" data-name="Kick"><b>🥁 Kick</b><span>Deep punch</span></div>
+        <div class="item" data-type="channel" data-name="Snare"><b>🥁 Snare</b><span>Crack and snap</span></div>
+        <div class="item" data-type="channel" data-name="Hi-Hat"><b>🥁 Hi-Hat</b><span>Closed metal</span></div>
+        <div class="item" data-type="channel" data-name="Bass"><b>🎸 Bass</b><span>Warm low end</span></div>
+        <div class="item" data-type="channel" data-name="Lead"><b>🎹 Lead</b><span>Bright synth</span></div>
       </div>
       <div class="sidebar-foot">
         <div class="small-grid">
           <button class="btn" id="addPatternBtn">+ Pattern Clip</button>
-          <button class="btn" id="importAudioBtn">📁 Import Audio</button>
+          <button class="btn" id="addAudioBtn">+ Audio Clip</button>
         </div>
-        <button class="btn" id="importMidiBtn" style="width:100%;">📥 MIDI Import</button>
-        <input type="file" id="audioFileInput" accept="audio/*" style="display:none" />
-        <input type="file" id="midiFileInput" accept=".mid,.midi" style="display:none" />
+        <div class="small-grid">
+          <button class="btn" id="importMidiBtn">📥 MIDI Import</button>
+        </div>
+        <div class="mini">Pattern clips use current channel. Audio clips open file picker.</div>
       </div>
     </aside>
 
@@ -283,54 +375,78 @@
         <button class="tab" data-view="mixerView">Mixer</button>
       </div>
       <div class="workspace panel">
+        <!-- Rack View -->
         <div class="view rack-view active" id="rackView">
-          <div class="panel-head">Step Sequencer <b id="playInfo">--:--</b></div>
+          <div class="panel-head">
+            <h3>Step Sequencer</h3>
+            <div class="status"><span>Playhead:</span><b id="playInfo">--:--</b></div>
+          </div>
           <div class="rack" id="rack"></div>
+          <div class="footer-note">Click steps to toggle. Select a channel to edit its piano roll.</div>
         </div>
+        <!-- Playlist View -->
         <div class="view playlist-view" id="playlistView">
-          <div class="panel-head">Playlist <b id="clipCount">0 clips</b></div>
-          <div class="playlist" id="playlistContainer"></div>
+          <div class="panel-head"><h3>Playlist</h3><b id="clipCount">0 clips</b></div>
+          <div class="playlist">
+            <div class="grid-wrap" id="playlistGrid">
+              <div class="track-labels" id="trackLabels"></div>
+              <div class="clips" id="clipsLayer"></div>
+              <div class="grid-lines"></div>
+            </div>
+          </div>
         </div>
+        <!-- Piano Roll View -->
         <div class="view piano-view" id="pianoView">
-          <div class="panel-head">Piano Roll <b id="selectedChannelLabel">Kick</b></div>
+          <div class="panel-head"><h3>Piano Roll</h3><b id="selectedChannelLabel">Kick</b></div>
           <div class="piano-wrap">
             <div style="display:flex; gap:10px; margin-bottom:8px;">
               <button class="btn" id="clearNotesBtn">Clear Notes</button>
               <button class="btn" id="quantizeBtn">Quantize</button>
             </div>
-            <div class="piano-canvas" id="pianoCanvas"><div class="keys" id="keys"></div><div class="pgrid" id="pgrid"></div></div>
+            <div class="piano-canvas" id="pianoCanvas">
+              <div class="keys" id="keys"></div>
+              <div class="pgrid" id="pgrid"></div>
+            </div>
           </div>
         </div>
+        <!-- Mixer View -->
         <div class="view mixer-view" id="mixerView">
-          <div class="panel-head">Mixer</div>
-          <div class="mixer" id="mixerContainer"></div>
+          <div class="panel-head"><h3>Mixer</h3></div>
+          <div class="mixer"><div class="mixer-strip-wrap" id="mixerStrips"></div></div>
         </div>
       </div>
     </section>
 
     <!-- Right Panel -->
     <aside class="panel right-panel">
-      <div class="panel-head">Project</div>
+      <div class="panel-head"><h3>Project</h3></div>
       <div class="panel-body">
-        <div style="padding:8px; border:1px solid var(--line); border-radius:12px;"><b>Master</b> <span id="masterSummary">Vol 80%</span></div>
-        <div style="padding:8px; border:1px solid var(--line); border-radius:12px;"><b>Export</b> .flp / .zip / .wav</div>
+        <div class="item"><b>Master</b><span id="masterSummary">Vol 80%</span></div>
+        <div class="item"><b>Save/Load</b><span>Save downloads .flp file. Load opens file picker.</span></div>
+        <div class="item"><b>Export formats</b><span>.flp, .zip, .fst, .fsc, .wav</span></div>
       </div>
     </aside>
   </div>
+  <div class="footer-note">ITS.Vermeer Studio – Space: Play/Stop · Ctrl+S: Save project file</div>
 </div>
 
-<!-- Export Modal -->
+<!-- Hidden file inputs -->
+<input type="file" id="audioFileInput" accept="audio/*" style="display:none" />
+<input type="file" id="midiFileInput" accept=".mid,.midi" style="display:none" />
+<input type="file" id="loadProjectInput" accept=".flp,.json" style="display:none" />
+
+<!-- Export modal -->
 <div class="modal-overlay" id="exportModal">
   <div class="modal">
     <h3>Export Project</h3>
-    <select id="exportFormat" style="width:100%; padding:8px; background:#0f1319; color:var(--text); border:1px solid var(--line); border-radius:8px;">
-      <option value="flp">FL Studio Project (.flp)</option>
-      <option value="zip">Zipped Loop (.zip)</option>
+    <select id="exportFormat" style="width:100%;padding:8px;background:#0f1319;color:var(--text);border:1px solid var(--line);border-radius:8px;">
+      <option value="flp">FL Studio Project (.flp) – JSON</option>
+      <option value="zip">Zipped Loop (.zip) – audio included</option>
       <option value="fst">Channel State (.fst)</option>
       <option value="fsc">Score (.fsc) – MIDI</option>
       <option value="wav">WAV Audio Render</option>
     </select>
-    <div style="display:flex; gap:10px; margin-top:16px;">
+    <div style="display:flex;gap:10px;margin-top:16px;">
       <button class="btn primary" id="confirmExport">Export</button>
       <button class="btn" id="cancelExport">Cancel</button>
     </div>
@@ -343,30 +459,27 @@
   const NOTES = ["C6","B5","A5","G5","F5","E5","D5","C5","B4","A4","G4","F4","E4","D4","C4","B3","A3","G3","F3","E3","D3","C3"];
   const NOTE_FREQ = { C3:130.81,D3:146.83,E3:164.81,F3:174.61,G3:196.00,A3:220.00,B3:246.94,C4:261.63,D4:293.66,E4:329.63,F4:349.23,G4:392.00,A4:440.00,B4:493.88,C5:523.25,D5:587.33,E5:659.25,F5:698.46,G5:783.99,A5:880.00,B5:987.77,C6:1046.50 };
 
+  // DOM refs
+  const $ = (id) => document.getElementById(id);
   const els = {
-    bpm: document.getElementById('bpm'), bpmVal: document.getElementById('bpmVal'),
-    bars: document.getElementById('bars'), playBtn: document.getElementById('playBtn'),
-    stopBtn: document.getElementById('stopBtn'), addChannelBtn: document.getElementById('addChannelBtn'),
-    saveBtn: document.getElementById('saveBtn'), loadBtn: document.getElementById('loadBtn'),
-    resetBtn: document.getElementById('resetBtn'), exportBtn: document.getElementById('exportBtn'),
-    addPatternBtn: document.getElementById('addPatternBtn'), importAudioBtn: document.getElementById('importAudioBtn'),
-    importMidiBtn: document.getElementById('importMidiBtn'), rack: document.getElementById('rack'),
-    playlistContainer: document.getElementById('playlistContainer'), clipCount: document.getElementById('clipCount'),
-    pianoCanvas: document.getElementById('pianoCanvas'), keys: document.getElementById('keys'),
-    pgrid: document.getElementById('pgrid'), mixerContainer: document.getElementById('mixerContainer'),
-    audioManager: document.getElementById('audioManager'), audioFileInput: document.getElementById('audioFileInput'),
-    midiFileInput: document.getElementById('midiFileInput'), exportModal: document.getElementById('exportModal'),
-    exportFormat: document.getElementById('exportFormat'), confirmExport: document.getElementById('confirmExport'),
-    cancelExport: document.getElementById('cancelExport'), playInfo: document.getElementById('playInfo'),
-    selectedChannelLabel: document.getElementById('selectedChannelLabel'),
-    masterSummary: document.getElementById('masterSummary')
+    bpm: $('bpm'), bpmVal: $('bpmVal'), bars: $('bars'), playBtn: $('playBtn'), stopBtn: $('stopBtn'), recordBtn: $('recordBtn'),
+    addChannelBtn: $('addChannelBtn'), saveBtn: $('saveBtn'), loadBtn: $('loadBtn'), resetBtn: $('resetBtn'),
+    addPatternBtn: $('addPatternBtn'), addAudioBtn: $('addAudioBtn'), importMidiBtn: $('importMidiBtn'),
+    rack: $('rack'), playlistGrid: $('playlistGrid'), trackLabels: $('trackLabels'), clipsLayer: $('clipsLayer'),
+    pianoCanvas: $('pianoCanvas'), keys: $('keys'), pgrid: $('pgrid'), mixerStrips: $('mixerStrips'),
+    tabs: [...document.querySelectorAll('.tab')], views: [...document.querySelectorAll('.view')],
+    selectedChannelLabel: $('selectedChannelLabel'), playInfo: $('playInfo'), clipCount: $('clipCount'),
+    masterSummary: $('masterSummary'), audioFileInput: $('audioFileInput'), midiFileInput: $('midiFileInput'),
+    loadProjectInput: $('loadProjectInput'), exportBtn: $('exportBtn'), exportModal: $('exportModal'),
+    exportFormat: $('exportFormat'), confirmExport: $('confirmExport'), cancelExport: $('cancelExport'),
+    browser: $('browser')
   };
 
   const state = {
     bpm: 128, bars: 2, playing: false, selectedChannel: 0, playStep: 0, nextNoteTime: 0,
     channels: [], clips: [], master: { volume: 0.8 },
-    ctx: null, masterGain: null, channelNodes: [], rafId: null,
-    audioBuffers: {}, activeSources: {}, audioFileNames: {}
+    ctx: null, masterGain: null, masterPan: null, channelNodes: [],
+    rafId: null, audioBuffers: {}
   };
 
   function defaultChannel(name, type='synth') {
@@ -391,121 +504,121 @@
       defaultChannel('Lead','synth')
     ];
     state.clips = [
-      { id: crypto.randomUUID(), name:'Intro Pattern', type:'pattern', track:0, start:0, length:4, channel:0, audioId:null }
+      { id: crypto.randomUUID(), name:'Intro Pattern', type:'pattern', track:0, start:0, length:4, channel:0, audioId:null },
+      { id: crypto.randomUUID(), name:'Drop (audio placeholder)', type:'audio', track:2, start:4, length:6, channel:4, audioId:null }
     ];
-    state.bpm=128; state.bars=2; state.selectedChannel=0;
+    state.bpm=128; state.bars=2; state.selectedChannel=0; state.master.volume=0.8;
     els.bpm.value=128; els.bpmVal.textContent='128'; els.bars.value='2';
     rebuildAudioNodes();
   }
 
   function ensureAudio() {
-    if (state.ctx && state.ctx.state !== 'closed') { if(state.ctx.state==='suspended') state.ctx.resume(); return state.ctx; }
+    if (state.ctx && state.ctx.state !== 'closed') {
+      if (state.ctx.state === 'suspended') state.ctx.resume();
+      return state.ctx;
+    }
     const ctx = new (window.AudioContext || window.webkitAudioContext)();
     const masterGain = ctx.createGain();
+    const masterPan = ctx.createStereoPanner();
     masterGain.gain.value = state.master.volume;
+    masterPan.pan.value = 0;
+    masterPan.connect(masterGain);
     masterGain.connect(ctx.destination);
-    state.ctx = ctx; state.masterGain = masterGain;
+    state.ctx = ctx; state.masterGain = masterGain; state.masterPan = masterPan;
     rebuildAudioNodes();
     return ctx;
   }
 
   function rebuildAudioNodes() {
-    if(!state.ctx) return;
-    state.channelNodes.forEach(n => { try { n.gain.disconnect(); } catch(e){} });
-    state.channelNodes = state.channels.map(ch => {
+    if (!state.ctx) return;
+    state.channelNodes.forEach(n => { try { n.gain.disconnect(); n.pan.disconnect(); } catch(e){} });
+    state.channelNodes = state.channels.map((ch,i) => {
       const gain = state.ctx.createGain();
-      gain.gain.value = ch.mute ? 0 : ch.volume;
-      gain.connect(state.masterGain);
-      return { gain };
+      const pan = state.ctx.createStereoPanner();
+      gain.gain.value = ch.volume;
+      pan.pan.value = ch.pan;
+      pan.connect(gain);
+      gain.connect(state.masterPan);
+      return { gain, pan };
     });
   }
 
-  function getChannelGain(i) { return state.channelNodes[i]?.gain; }
+  function getChannelNodes(idx) {
+    if (idx >= state.channelNodes.length) rebuildAudioNodes();
+    return state.channelNodes[idx];
+  }
 
+  // Audio playback
   function playDrum(name, time, vel, chIdx) {
-    const ctx = ensureAudio();
-    const gain = getChannelGain(chIdx);
-    if(!gain || state.channels[chIdx]?.mute) return;
+    const ctx = ensureAudio(); const nodes = getChannelNodes(chIdx);
+    if (!nodes || state.channels[chIdx]?.mute) return;
     const g = ctx.createGain(); g.gain.setValueAtTime(vel, time); g.gain.exponentialRampToValueAtTime(0.001, time+0.2);
-    g.connect(gain);
-    if(name.includes('Kick')) {
+    g.connect(nodes.pan);
+    if (name.includes('Kick')) {
       const o = ctx.createOscillator(); o.type='sine';
-      const og = ctx.createGain(); og.gain.setValueAtTime(0.001,time); og.gain.exponentialRampToValueAtTime(1,time+0.008); og.gain.exponentialRampToValueAtTime(0.001,time+0.18);
-      o.frequency.setValueAtTime(160,time); o.frequency.exponentialRampToValueAtTime(40,time+0.14);
-      o.connect(og).connect(g); o.start(time); o.stop(time+0.2);
-    } else if(name.includes('Snare')) {
-      const buf = ctx.createBuffer(1, ctx.sampleRate*0.22, ctx.sampleRate);
-      const d = buf.getChannelData(0); for(let i=0;i<d.length;i++) d[i]=(Math.random()*2-1)*(1-i/d.length)*0.7;
+      const og = ctx.createGain(); og.gain.setValueAtTime(0.001,time); og.gain.exponentialRampToValueAtTime(1,time+0.005); og.gain.exponentialRampToValueAtTime(0.001,time+0.15);
+      o.frequency.setValueAtTime(150,time); o.frequency.exponentialRampToValueAtTime(40,time+0.1);
+      o.connect(og).connect(g); o.start(time); o.stop(time+0.18);
+    } else if (name.includes('Snare')) {
+      const buf = ctx.createBuffer(1, ctx.sampleRate*0.2, ctx.sampleRate);
+      const d = buf.getChannelData(0); for(let i=0;i<d.length;i++) d[i]=(Math.random()*2-1)*(1-i/d.length);
       const src = ctx.createBufferSource(); src.buffer=buf;
       const filt = ctx.createBiquadFilter(); filt.type='highpass'; filt.frequency.value=1200;
-      src.connect(filt).connect(g); src.start(time); src.stop(time+0.22);
+      src.connect(filt).connect(g); src.start(time); src.stop(time+0.2);
     } else {
-      const buf = ctx.createBuffer(1, ctx.sampleRate*0.07, ctx.sampleRate);
-      const d = buf.getChannelData(0); for(let i=0;i<d.length;i++) d[i]=(Math.random()*2-1)*(1-i/d.length)*0.5;
+      const buf = ctx.createBuffer(1, ctx.sampleRate*0.05, ctx.sampleRate);
+      const d = buf.getChannelData(0); for(let i=0;i<d.length;i++) d[i]=(Math.random()*2-1)*(1-i/d.length)*0.6;
       const src = ctx.createBufferSource(); src.buffer=buf;
       const filt = ctx.createBiquadFilter(); filt.type='highpass'; filt.frequency.value=5000;
-      src.connect(filt).connect(g); src.start(time); src.stop(time+0.08);
+      src.connect(filt).connect(g); src.start(time); src.stop(time+0.06);
     }
   }
 
-  function playTone(freq, time, len, vol, chIdx) {
-    const ctx = ensureAudio();
-    const gain = getChannelGain(chIdx);
-    if(!gain || state.channels[chIdx]?.mute) return;
-    const osc = ctx.createOscillator(); osc.type='triangle'; osc.frequency.value=freq;
+  function playTone(freq, time, len, vol, type, chIdx) {
+    const ctx = ensureAudio(); const nodes = getChannelNodes(chIdx);
+    if (!nodes || state.channels[chIdx]?.mute) return;
+    const osc = ctx.createOscillator(); osc.type=type; osc.frequency.value=freq;
     const g = ctx.createGain(); g.gain.setValueAtTime(0.001,time); g.gain.exponentialRampToValueAtTime(vol,time+0.01); g.gain.exponentialRampToValueAtTime(0.001,time+len*0.25);
-    osc.connect(g).connect(gain); osc.start(time); osc.stop(time+len*0.3);
-  }
-
-  function stopClipSources(clipId) {
-    if (state.activeSources[clipId]) {
-      state.activeSources[clipId].forEach(src => { try { src.stop(); } catch(e){} });
-      delete state.activeSources[clipId];
-    }
+    osc.connect(g).connect(nodes.pan); osc.start(time); osc.stop(time+len*0.3);
   }
 
   function scheduler() {
-    if(!state.playing) return;
-    const ctx = ensureAudio();
-    if(ctx.state==='suspended') { ctx.resume(); state.rafId=requestAnimationFrame(scheduler); return; }
+    if (!state.playing) return;
+    const ctx = ensureAudio(); if (ctx.state==='suspended') { ctx.resume(); state.rafId=requestAnimationFrame(scheduler); return; }
     const stepDur = 60/state.bpm/4;
     const totalSteps = state.bars*STEPS;
-    while(state.nextNoteTime < ctx.currentTime + 0.2) {
+    while (state.nextNoteTime < ctx.currentTime + 0.2) {
       const step = ((state.playStep%totalSteps)+totalSteps)%totalSteps;
       const anySolo = state.channels.some(c=>c.solo);
-      for(let i=0;i<state.channels.length;i++) {
+      for (let i=0; i<state.channels.length; i++) {
         const ch = state.channels[i];
-        if(ch.mute || (anySolo && !ch.solo)) continue;
+        if (ch.mute || (anySolo && !ch.solo)) continue;
         const local = step%STEPS;
-        if(ch.type==='drum' && ch.steps[local]) playDrum(ch.name, state.nextNoteTime, ch.volume*0.9, i);
-        else if(ch.type!=='drum') {
-          if(ch.steps[local]) playTone(220, state.nextNoteTime,1,0.08, i);
-          for(const n of ch.notes) if(n.start===local) playTone(NOTE_FREQ[n.note]||220, state.nextNoteTime, n.length, 0.25, i);
+        if (ch.type==='drum' && ch.steps[local]) playDrum(ch.name, state.nextNoteTime, ch.volume*0.9, i);
+        else if (ch.type!=='drum') {
+          if (ch.steps[local]) playTone(220, state.nextNoteTime,1,0.08, 'triangle', i);
+          for (const n of ch.notes) {
+            if (n.start===local) playTone(NOTE_FREQ[n.note]||220, state.nextNoteTime, n.length, 0.2, 'triangle', i);
+          }
         }
       }
-      const clipsSnapshot = [...state.clips];
-      for(const clip of clipsSnapshot) {
-        const cs = clip.start*4, ce = (clip.start+clip.length)*4;
-        if(step<cs || step>=ce) continue;
+      for (const clip of state.clips) {
+        const clipStart = clip.start*4, clipEnd = (clip.start+clip.length)*4;
+        if (step<clipStart || step>=clipEnd) continue;
         const ch = state.channels[clip.channel];
-        if(!ch || ch.mute || (anySolo && !ch.solo)) continue;
-        if(clip.type==='audio' && clip.audioId && state.audioBuffers[clip.audioId]) {
-          if(step===cs) {
+        if (!ch || ch.mute || (anySolo && !ch.solo)) continue;
+        if (clip.type==='audio' && clip.audioId && state.audioBuffers[clip.audioId]) {
+          if ((step-clipStart)===0) {
             const src = ctx.createBufferSource(); src.buffer = state.audioBuffers[clip.audioId];
             const g = ctx.createGain(); g.gain.value = ch.volume;
-            src.connect(g).connect(getChannelGain(clip.channel));
+            src.connect(g).connect(getChannelNodes(clip.channel).pan);
             src.start(state.nextNoteTime);
-            if(!state.activeSources[clip.id]) state.activeSources[clip.id] = [];
-            state.activeSources[clip.id].push(src);
-            src.onended = () => {
-              if(state.activeSources[clip.id]) state.activeSources[clip.id] = state.activeSources[clip.id].filter(s => s !== src);
-            };
           }
-        } else if(clip.type==='pattern') {
-          const local = (step-cs)%STEPS;
-          if(ch.steps[local]) {
-            if(ch.type==='drum') playDrum(ch.name, state.nextNoteTime, ch.volume, clip.channel);
-            else playTone(220, state.nextNoteTime,1,0.1, clip.channel);
+        } else if (clip.type==='pattern') {
+          const local = (step-clipStart)%STEPS;
+          if (ch.steps[local]) {
+            if (ch.type==='drum') playDrum(ch.name, state.nextNoteTime, ch.volume, clip.channel);
+            else playTone(220, state.nextNoteTime,1,0.08,'triangle', clip.channel);
           }
         }
       }
@@ -519,408 +632,409 @@
   function updatePlayhead(step) {
     const local = step%STEPS;
     els.playInfo.textContent = `${Math.floor(step/STEPS)+1}:${local+1}`;
-    document.querySelectorAll('.step.playing').forEach(e=>e.classList.remove('playing'));
+    document.querySelectorAll('.step.playing,.note.playing').forEach(e=>e.classList.remove('playing'));
     document.querySelectorAll(`.step[data-step-index="${local}"]`).forEach(e=>e.classList.add('playing'));
-    // Mixer meters
-    document.querySelectorAll('[data-meter]').forEach((m,i)=>{
-      if(i>=state.channels.length) return;
-      const ch = state.channels[i];
-      const active = !ch.mute && (ch.steps[local] || (ch.type!=='drum' && ch.notes.some(n=>n.start===local)));
-      m.style.height = active ? `${40+Math.random()*50*ch.volume}%` : '0%';
+    document.querySelectorAll('.note').forEach(e=>{
+      const s=+e.dataset.start, l=+e.dataset.length;
+      if (local>=s && local<s+l) e.classList.add('playing');
     });
   }
 
   function stopPlayback(reset=true) {
     state.playing=false; if(state.rafId) cancelAnimationFrame(state.rafId); state.rafId=null;
     if(reset) { state.playStep=0; state.nextNoteTime=0; }
-    document.querySelectorAll('.step.playing').forEach(e=>e.classList.remove('playing'));
+    document.querySelectorAll('.step.playing,.note.playing').forEach(e=>e.classList.remove('playing'));
     els.playBtn.textContent='▶ Play'; if(reset) els.playInfo.textContent='--:--';
-    document.querySelectorAll('[data-meter]').forEach(m=>m.style.height='0%');
-    Object.keys(state.activeSources).forEach(id => stopClipSources(id));
   }
 
   function togglePlay() {
-    if(state.playing) stopPlayback(true);
-    else { ensureAudio(); state.playing=true; state.nextNoteTime=state.ctx.currentTime+0.05; els.playBtn.textContent='⏸ Pause'; scheduler(); }
+    if (state.playing) { stopPlayback(true); return; }
+    ensureAudio(); state.playing=true; state.nextNoteTime=state.ctx.currentTime+0.05;
+    els.playBtn.textContent='⏸ Pause'; scheduler();
   }
 
-  function renderAll() {
-    els.bpmVal.textContent = state.bpm;
-    renderRack(); renderPlaylist(); renderPiano(); renderMixer(); renderAudioManager();
-    els.masterSummary.textContent = `Vol ${Math.round(state.master.volume*100)}%`;
-  }
-
+  // Rendering
   function renderRack() {
     els.rack.innerHTML = '';
     state.channels.forEach((ch, idx) => {
       const row = document.createElement('div'); row.className='channel';
       row.innerHTML = `
-        <div>
-          <b>${escapeHtml(ch.name)}</b>
-          <div><small>Vol</small> <input type="range" min="0" max="1" step="0.01" value="${ch.volume}" data-vol="${idx}" style="width:80px;"></div>
-          <button data-mute="${idx}">${ch.mute?'🔇':'M'}</button>
-          <button data-solo="${idx}">${ch.solo?'🔊':'Solo'}</button>
+        <div class="chan-info">
+          <div class="chan-title">
+            <input value="${escapeHtml(ch.name)}" data-edit-name="${idx}">
+            <button class="btn ghost" data-select="${idx}">${idx===state.selectedChannel?'★':'Select'}</button>
+          </div>
+          <div style="display:flex;gap:6px;">
+            <div><div class="mini">Vol</div><input type="range" min="0" max="1" step="0.01" value="${ch.volume}" data-vol="${idx}"></div>
+            <div><div class="mini">Pan</div><input type="range" min="-1" max="1" step="0.01" value="${ch.pan}" data-pan="${idx}"></div>
+            <button class="toggle" data-mute="${idx}" style="width:auto;${ch.mute?'color:#fb7185':''}">${ch.mute?'M':'On'}</button>
+          </div>
         </div>
-        <div class="steps">${ch.steps.map((on,s)=>`<div class="step ${on?'on':''}" data-step-index="${s}" data-channel="${idx}"></div>`).join('')}</div>
-        <div><button data-select="${idx}">${idx===state.selectedChannel?'★':'Edit'}</button></div>`;
+        <div class="steps">${Array.from({length:STEPS}, (_,s)=>`<div class="step ${ch.steps[s]?'on':''}" data-step-index="${s}" data-channel="${idx}" data-step="${s+1}"></div>`).join('')}</div>
+        <div class="chan-info">
+          <div class="mini">Type: ${ch.type}</div>
+          <button class="btn" data-solo="${idx}" style="${ch.solo?'background:#ff9f1c;color:#000':''}">${ch.solo?'Solo':'Solo Off'}</button>
+          <button class="btn" data-dup="${idx}">Dup</button>
+        </div>`;
       els.rack.appendChild(row);
     });
-    document.querySelectorAll('[data-step-index]').forEach(el => {
+    // events
+    document.querySelectorAll('[data-step-index]').forEach(el=>{
       el.onclick = () => {
-        const c=+el.dataset.channel, s=+el.dataset.stepIndex;
-        state.channels[c].steps[s] = !state.channels[c].steps[s];
-        renderAll();
+        const chIdx = +el.dataset.channel, sIdx = +el.dataset.stepIndex;
+        state.channels[chIdx].steps[sIdx] = !state.channels[chIdx].steps[sIdx];
+        renderAll(false);
       };
     });
-    document.querySelectorAll('[data-vol]').forEach(sl => {
-      sl.oninput = () => { state.channels[+sl.dataset.vol].volume = +sl.value; rebuildAudioNodes(); };
+    document.querySelectorAll('[data-edit-name]').forEach(inp=>{
+      inp.oninput = () => { state.channels[+inp.dataset.editName].name = inp.value; renderAll(false); };
     });
-    document.querySelectorAll('[data-mute]').forEach(btn => {
-      btn.onclick = () => { state.channels[+btn.dataset.mute].mute = !state.channels[+btn.dataset.mute].mute; rebuildAudioNodes(); renderAll(); };
+    document.querySelectorAll('[data-vol]').forEach(sl=>{
+      sl.oninput = () => { state.channels[+sl.dataset.vol].volume = +sl.value; updateChannelNode(+sl.dataset.vol); renderAll(false); };
     });
-    document.querySelectorAll('[data-solo]').forEach(btn => {
-      btn.onclick = () => { state.channels[+btn.dataset.solo].solo = !state.channels[+btn.dataset.solo].solo; renderAll(); };
+    document.querySelectorAll('[data-pan]').forEach(sl=>{
+      sl.oninput = () => { state.channels[+sl.dataset.pan].pan = +sl.value; updateChannelNode(+sl.dataset.pan); renderAll(false); };
     });
-    document.querySelectorAll('[data-select]').forEach(btn => {
-      btn.onclick = () => { state.selectedChannel = +btn.dataset.select; renderAll(); };
+    document.querySelectorAll('[data-mute]').forEach(btn=>{
+      btn.onclick = () => { state.channels[+btn.dataset.mute].mute = !state.channels[+btn.dataset.mute].mute; renderAll(false); };
+    });
+    document.querySelectorAll('[data-select]').forEach(btn=>{
+      btn.onclick = () => { state.selectedChannel = +btn.dataset.select; renderAll(false); };
+    });
+    document.querySelectorAll('[data-solo]').forEach(btn=>{
+      btn.onclick = () => { state.channels[+btn.dataset.solo].solo = !state.channels[+btn.dataset.solo].solo; renderAll(false); };
+    });
+    document.querySelectorAll('[data-dup]').forEach(btn=>{
+      btn.onclick = () => duplicateChannel(+btn.dataset.dup);
     });
   }
 
+  function updateChannelNode(idx) {
+    const nodes = getChannelNodes(idx); const ch = state.channels[idx];
+    if (nodes && ch) {
+      nodes.gain.gain.setTargetAtTime(ch.mute?0:ch.volume, state.ctx.currentTime, 0.02);
+      nodes.pan.pan.setTargetAtTime(ch.pan, state.ctx.currentTime, 0.02);
+    }
+  }
+
   function renderPlaylist() {
-    els.playlistContainer.innerHTML = '';
-    state.clips.forEach((clip, idx) => {
-      const el = document.createElement('div');
-      el.className = `clip ${clip.type}`;
-      const chName = state.channels[clip.channel]?.name || '?';
-      el.innerHTML = `<span>${clip.name} (${chName})</span><button class="x" data-remove="${idx}">✕</button>`;
-      els.playlistContainer.appendChild(el);
+    els.trackLabels.innerHTML = '';
+    const numTracks = Math.max(8, state.channels.length);
+    for (let i=0; i<numTracks; i++) {
+      const lab = document.createElement('div'); lab.className='track-label';
+      lab.textContent = state.channels[i] ? `${i+1}. ${state.channels[i].name}` : `${i+1}. (empty)`;
+      els.trackLabels.appendChild(lab);
+    }
+    els.clipsLayer.innerHTML = '';
+    state.clips.forEach((clip, idx)=>{
+      const el = document.createElement('div'); el.className=`clip ${clip.type}`;
+      el.style.left = `${clip.start*64}px`; el.style.top = `${clip.track*64+6}px`;
+      el.style.width = `${clip.length*64-10}px`;
+      el.innerHTML = `<span>${escapeHtml(clip.name)}</span><span class="x">×</span>`;
+      el.onclick = (e) => {
+        if (e.target.classList.contains('x')) { state.clips.splice(idx,1); renderAll(); }
+        else { state.selectedChannel = clip.channel; renderAll(false); }
+      };
+      els.clipsLayer.appendChild(el);
     });
     els.clipCount.textContent = `${state.clips.length} clips`;
-    document.querySelectorAll('[data-remove]').forEach(btn => {
-      btn.onclick = (e) => {
-        e.stopPropagation();
-        const idx = +btn.dataset.remove;
-        stopClipSources(state.clips[idx].id);
-        state.clips.splice(idx, 1);
-        renderAll();
-      };
-    });
   }
 
   function renderPiano() {
     const ch = state.channels[state.selectedChannel];
     els.selectedChannelLabel.textContent = ch ? ch.name : '—';
-    els.keys.innerHTML = ''; NOTES.forEach(n => { const k=document.createElement('div'); k.className='key'; k.textContent=n; els.keys.appendChild(k); });
+    els.keys.innerHTML = ''; NOTES.forEach(n=>{ const k=document.createElement('div'); k.className='key'; k.textContent=n; k.style.height='28px'; els.keys.appendChild(k); });
     els.pgrid.innerHTML = '';
-    if(!ch || ch.type==='drum') return;
-    ch.notes.forEach(note => {
+    if (!ch || ch.type==='drum') return;
+    ch.notes.forEach(note=>{
       const row = NOTES.indexOf(note.note); if(row<0) return;
       const el = document.createElement('div'); el.className='note';
-      el.style.left = `${note.start*40}px`; el.style.top = `${row*25+2}px`; el.style.width = `${note.length*40-4}px`;
-      el.textContent = note.note;
-      el.onclick = () => { ch.notes = ch.notes.filter(n => n.id !== note.id); renderAll(); };
+      el.dataset.id=note.id; el.dataset.start=note.start; el.dataset.length=note.length;
+      el.style.left=`${note.start*32}px`; el.style.top=`${row*28+2}px`; el.style.width=`${note.length*32-4}px`;
+      el.textContent=note.note;
+      el.onclick=(e)=>{ e.stopPropagation(); removeNote(note.id); };
       els.pgrid.appendChild(el);
     });
     els.pgrid.onclick = (e) => {
-      if(e.target !== els.pgrid) return;
+      if (e.target !== els.pgrid) return;
       const rect = els.pgrid.getBoundingClientRect();
-      const x = e.clientX - rect.left, y = e.clientY - rect.top;
-      const start = Math.floor(x/40), row = Math.floor(y/25);
-      if(row >= 0 && row < NOTES.length) {
-        const note = NOTES[row];
-        const existing = ch.notes.find(n => n.start===start && n.note===note);
-        if(existing) ch.notes = ch.notes.filter(n => n !== existing);
-        else ch.notes.push({ id: crypto.randomUUID(), start, length:2, note });
-        renderAll();
-      }
+      const x = e.clientX-rect.left, y = e.clientY-rect.top;
+      const start = Math.floor(x/32), row = Math.floor(y/28);
+      if (row<0 || row>=NOTES.length) return;
+      toggleNote(start, NOTES[row]);
     };
   }
 
   function renderMixer() {
-    els.mixerContainer.innerHTML = '';
-    state.channels.forEach((ch, i) => {
-      const strip = document.createElement('div'); strip.className='strip';
-      strip.innerHTML = `<label>${escapeHtml(ch.name)}</label><div class="meter"><span data-meter="${i}"></span></div><input class="fader" type="range" min="0" max="1" step="0.01" value="${ch.volume}" data-mfader="${i}">`;
-      els.mixerContainer.appendChild(strip);
+    els.mixerStrips.innerHTML = '';
+    state.channels.forEach((ch,i)=>{
+      const s = document.createElement('div'); s.className='strip';
+      s.innerHTML = `<label>${escapeHtml(ch.name)}</label><div class="meter"><span data-meter="${i}"></span></div>
+        <input class="fader" type="range" min="0" max="1" step="0.01" value="${ch.volume}" data-mfader="${i}">`;
+      els.mixerStrips.appendChild(s);
     });
-    const master = document.createElement('div'); master.className='strip';
-    master.innerHTML = `<label>Master</label><div class="meter"><span data-meter="master"></span></div><input class="fader" type="range" min="0" max="1.2" step="0.01" value="${state.master.volume}" data-master-vol>`;
-    els.mixerContainer.appendChild(master);
-    document.querySelectorAll('[data-mfader]').forEach(sl => {
-      sl.oninput = () => { state.channels[+sl.dataset.mfader].volume = +sl.value; rebuildAudioNodes(); };
+    const m = document.createElement('div'); m.className='strip master';
+    m.innerHTML = `<label>Master</label><div class="meter"><span data-meter="master"></span></div>
+      <input class="fader" type="range" min="0" max="1.2" step="0.01" value="${state.master.volume}" data-master-vol>`;
+    els.mixerStrips.appendChild(m);
+    document.querySelectorAll('[data-mfader]').forEach(sl=>{
+      sl.oninput = () => { state.channels[+sl.dataset.mfader].volume = +sl.value; updateChannelNode(+sl.dataset.mfader); renderAll(false); };
     });
     document.querySelector('[data-master-vol]').oninput = (e) => {
       state.master.volume = +e.target.value;
       if(state.masterGain) state.masterGain.gain.setTargetAtTime(state.master.volume, state.ctx.currentTime, 0.03);
+      els.masterSummary.textContent = `Vol ${Math.round(state.master.volume*100)}%`;
     };
   }
 
-  function renderAudioManager() {
-    els.audioManager.innerHTML = '';
-    const entries = Object.entries(state.audioFileNames);
-    if(entries.length === 0) {
-      els.audioManager.innerHTML = '<div style="color:var(--muted); font-size:12px;">No audio imported</div>';
-      return;
+  function renderAll(full=true) {
+    els.bpmVal.textContent = state.bpm;
+    renderRack(); renderPlaylist(); renderPiano(); renderMixer();
+    els.masterSummary.textContent = `Vol ${Math.round(state.master.volume*100)}%`;
+    if (full) {
+      const activeView = document.querySelector('.tab.active')?.dataset.view || 'rackView';
+      showView(activeView);
     }
-    entries.forEach(([id, name]) => {
-      const div = document.createElement('div');
-      div.className = 'audio-item';
-      div.innerHTML = `<span>🎵 ${name}</span><div><button data-play-audio="${id}">▶</button><button data-delete-audio="${id}" style="margin-left:6px;">🗑</button></div>`;
-      els.audioManager.appendChild(div);
-    });
-    document.querySelectorAll('[data-play-audio]').forEach(btn => {
-      btn.onclick = () => {
-        const id = btn.dataset.playAudio;
-        if(state.audioBuffers[id]) {
-          const ctx = ensureAudio();
-          const src = ctx.createBufferSource();
-          src.buffer = state.audioBuffers[id];
-          src.connect(state.masterGain);
-          src.start();
-        }
-      };
-    });
-    document.querySelectorAll('[data-delete-audio]').forEach(btn => {
-      btn.onclick = () => {
-        const id = btn.dataset.deleteAudio;
-        delete state.audioBuffers[id];
-        delete state.audioFileNames[id];
-        state.clips = state.clips.filter(c => c.audioId !== id);
-        renderAll();
-      };
-    });
   }
 
+  function showView(viewId) {
+    els.tabs.forEach(t=>t.classList.toggle('active', t.dataset.view===viewId));
+    els.views.forEach(v=>v.classList.toggle('active', v.id===viewId));
+  }
+
+  function escapeHtml(s) { return String(s).replace(/[&<>"']/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[m]); }
+
+  function toggleNote(start, note) {
+    const ch = state.channels[state.selectedChannel];
+    if (!ch || ch.type==='drum') return;
+    const idx = ch.notes.findIndex(n=>n.start===start && n.note===note);
+    if (idx>=0) ch.notes.splice(idx,1); else ch.notes.push({id:crypto.randomUUID(),start,length:2,note});
+    renderAll(false);
+  }
+  function removeNote(id) { const ch=state.channels[state.selectedChannel]; if(ch) ch.notes=ch.notes.filter(n=>n.id!==id); renderAll(false); }
+  function duplicateChannel(idx) {
+    const src = state.channels[idx]; if(!src) return;
+    const copy = JSON.parse(JSON.stringify(src)); copy.name = src.name+' Copy';
+    copy.notes = copy.notes.map(n=>({...n, id:crypto.randomUUID()})); copy.mute=false; copy.solo=false;
+    state.channels.splice(idx+1,0,copy); rebuildAudioNodes(); renderAll();
+  }
+
+  // Audio file import (triggered by +Audio Clip button)
   async function importAudioFile(file) {
     const buf = await file.arrayBuffer();
     const ctx = ensureAudio();
     const audioBuffer = await ctx.decodeAudioData(buf);
     const id = crypto.randomUUID();
     state.audioBuffers[id] = audioBuffer;
-    state.audioFileNames[id] = file.name;
-    const clip = {
-      id: crypto.randomUUID(),
-      name: file.name.replace(/\.[^.]+$/, ''),
-      type: 'audio',
-      track: state.selectedChannel,
-      start: 0,
-      length: Math.ceil(audioBuffer.duration * (state.bpm / 60)),
-      channel: state.selectedChannel,
-      audioId: id
-    };
-    state.clips.push(clip);
+    state.clips.push({
+      id: crypto.randomUUID(), name: file.name.replace(/\.[^.]+$/,''), type:'audio',
+      track: Math.min(state.channels.length-1, state.selectedChannel), start:0,
+      length: Math.ceil(audioBuffer.duration * (state.bpm/60)), channel: state.selectedChannel, audioId:id
+    });
     renderAll();
   }
 
-  function exportProject(format) {
-    const projectData = { bpm: state.bpm, bars: state.bars, channels: state.channels, clips: state.clips, master: state.master };
-    if (format === 'flp') {
-      const blob = new Blob([JSON.stringify(projectData)], { type: 'application/json' });
-      downloadBlob(blob, 'project.flp');
-    } else if (format === 'zip') {
-      const zip = new JSZip();
-      zip.file('project.json', JSON.stringify(projectData));
-      Object.entries(state.audioBuffers).forEach(([id, buffer]) => {
-        const wav = audioBufferToWavBlob(buffer);
-        zip.file(`audio/${id}.wav`, wav);
-      });
-      zip.generateAsync({ type: 'blob' }).then(blob => downloadBlob(blob, 'project.zip'));
-    } else if (format === 'fst') {
-      const blob = new Blob([JSON.stringify(state.channels)], { type: 'application/json' });
-      downloadBlob(blob, 'channels.fst');
-    } else if (format === 'fsc') {
-      const ch = state.channels[state.selectedChannel];
-      if (!ch || ch.type === 'drum') return alert('Select a synth channel for score export.');
-      const midi = createMidiFile(ch.notes, state.bpm);
-      const blob = new Blob([midi], { type: 'audio/midi' });
-      downloadBlob(blob, 'score.fsc');
-    } else if (format === 'wav') {
-      renderOfflineWav();
-    }
+  // MIDI import
+  async function importMidiFile(file) {
+    const buf = await file.arrayBuffer();
+    const notes = parseMidi(new Uint8Array(buf));
+    if (!notes.length) return alert('No notes found.');
+    const ch = state.channels[state.selectedChannel];
+    if (!ch || ch.type==='drum') return alert('Select a synth channel.');
+    ch.notes = notes.map(n=>({id:crypto.randomUUID(), start:n.start, length:n.length, note:n.note}));
+    renderAll();
   }
 
-  function renderOfflineWav() {
-    const length = state.bars * STEPS * 60 / state.bpm;
-    const offlineCtx = new OfflineAudioContext(2, 44100 * length, 44100);
-    // Simple drum render
-    const stepDur = 60 / state.bpm / 4;
-    for (let step = 0; step < state.bars * STEPS; step++) {
-      const time = step * stepDur;
-      state.channels.forEach((ch, i) => {
-        if (ch.mute) return;
-        const local = step % STEPS;
-        if (ch.type === 'drum' && ch.steps[local]) {
-          const gain = offlineCtx.createGain();
-          gain.gain.value = ch.volume * 0.8;
-          gain.connect(offlineCtx.destination);
-          const osc = offlineCtx.createOscillator();
-          osc.frequency.value = 150;
-          osc.connect(gain);
-          osc.start(time);
-          osc.stop(time + 0.1);
-        }
-      });
+  function parseMidi(data) {
+    let pos=0; function readInt(b){let v=0;for(let i=0;i<b;i++) v=(v<<8)|data[pos++];return v;}
+    if(readInt(4)!==0x4D546864) return[];
+    readInt(4); readInt(2); const tracks=readInt(2); const division=readInt(2);
+    const ticksPerQuarter = division & 0x7FFF;
+    const notes=[]; const active={};
+    for(let t=0;t<tracks;t++){
+      if(readInt(4)!==0x4D54726B) break;
+      const trackLen=readInt(4); const end=pos+trackLen; let tick=0, running=0;
+      while(pos<end){
+        const delta=readVarLen(); tick+=delta;
+        let status=data[pos]; if(status<0x80){status=running; pos--;} else{running=status; pos++;}
+        if(status===0xFF){pos++; const len=readVarLen(); pos+=len; continue;}
+        if(status>=0xF0) continue;
+        const cmd=status&0xF0, ch=status&0x0F;
+        if(cmd===0x90||cmd===0x80){
+          const note=data[pos++], vel=data[pos++];
+          if(cmd===0x90 && vel>0){
+            if(!active[note]) active[note]=[];
+            active[note].push({tick, ch});
+          } else {
+            if(active[note] && active[note].length){
+              const on=active[note].pop();
+              const startStep=Math.round(on.tick/ticksPerQuarter*4);
+              const lenStep=Math.max(1, Math.round((tick-on.tick)/ticksPerQuarter*4));
+              notes.push({start:startStep, length:lenStep, note:midiNoteToName(note)});
+            }
+          }
+        } else { const skip=(cmd===0xC0||cmd===0xD0)?1:2; pos+=skip; }
+      }
     }
-    offlineCtx.startRendering().then(renderedBuffer => {
-      const wav = audioBufferToWavBlob(renderedBuffer);
-      downloadBlob(wav, 'render.wav');
-    });
+    return notes.sort((a,b)=>a.start-b.start);
   }
+  function readVarLen(){let v=0,b;do{b=data[pos++];v=(v<<7)|(b&0x7F);}while(b&0x80);return v;}
+  function midiNoteToName(n){const names=['C','C#','D','D#','E','F','F#','G','G#','A','A#','B']; return names[n%12]+(Math.floor(n/12)-1);}
 
+  // Export functions
+  function downloadJSON(obj, filename) {
+    const blob = new Blob([JSON.stringify(obj,null,2)], {type:'application/json'});
+    const a = document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=filename; a.click();
+  }
+  function downloadBlob(blob, filename) {
+    const a = document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=filename; a.click();
+  }
+  async function exportFLP() { downloadJSON({bpm:state.bpm,bars:state.bars,channels:state.channels,clips:state.clips,master:state.master}, 'project.flp'); }
+  async function exportZip() {
+    const zip = new JSZip();
+    zip.file('project.json', JSON.stringify({bpm:state.bpm,bars:state.bars,channels:state.channels,clips:state.clips,master:state.master}));
+    for (const clip of state.clips) if (clip.audioId && state.audioBuffers[clip.audioId]) {
+      const buf = state.audioBuffers[clip.audioId];
+      const wav = audioBufferToWavBlob(buf); zip.file(`audio/${clip.audioId}.wav`, wav);
+    }
+    const blob = await zip.generateAsync({type:'blob'}); downloadBlob(blob, 'project.zip');
+  }
   function audioBufferToWavBlob(buffer) {
-    const numChannels = buffer.numberOfChannels;
-    const sampleRate = buffer.sampleRate;
-    const length = buffer.length;
-    const bitsPerSample = 16;
-    const byteRate = sampleRate * numChannels * bitsPerSample / 8;
-    const blockAlign = numChannels * bitsPerSample / 8;
-    const dataSize = length * numChannels * bitsPerSample / 8;
-    const arrayBuffer = new ArrayBuffer(44 + dataSize);
-    const view = new DataView(arrayBuffer);
-    writeString(view, 0, 'RIFF');
-    view.setUint32(4, 36 + dataSize, true);
-    writeString(view, 8, 'WAVE');
-    writeString(view, 12, 'fmt ');
-    view.setUint32(16, 16, true);
-    view.setUint16(20, 1, true);
-    view.setUint16(22, numChannels, true);
-    view.setUint32(24, sampleRate, true);
-    view.setUint32(28, byteRate, true);
-    view.setUint16(32, blockAlign, true);
-    view.setUint16(34, bitsPerSample, true);
-    writeString(view, 36, 'data');
-    view.setUint32(40, dataSize, true);
-    const channelData = buffer.getChannelData(0);
-    let offset = 44;
-    for (let i = 0; i < length; i++) {
-      const s = Math.max(-1, Math.min(1, channelData[i]));
-      view.setInt16(offset, s < 0 ? s * 0x8000 : s * 0x7FFF, true);
-      offset += 2;
-    }
-    return new Blob([arrayBuffer], { type: 'audio/wav' });
+    const numChannels = buffer.numberOfChannels, sampleRate = buffer.sampleRate, bitsPerSample=16;
+    const data = buffer.getChannelData(0), byteRate = sampleRate*numChannels*bitsPerSample/8;
+    const blockAlign = numChannels*bitsPerSample/8, dataSize = data.length*numChannels*bitsPerSample/8;
+    const headerSize=44, arrayBuffer = new ArrayBuffer(headerSize+dataSize), view=new DataView(arrayBuffer);
+    writeStr(view,0,'RIFF'); view.setUint32(4,36+dataSize,true); writeStr(view,8,'WAVE');
+    writeStr(view,12,'fmt '); view.setUint32(16,16,true); view.setUint16(20,1,true);
+    view.setUint16(22,numChannels,true); view.setUint32(24,sampleRate,true); view.setUint32(28,byteRate,true);
+    view.setUint16(32,blockAlign,true); view.setUint16(34,bitsPerSample,true);
+    writeStr(view,36,'data'); view.setUint32(40,dataSize,true);
+    let offset=44; for(let i=0;i<data.length;i++){ const s=Math.max(-1,Math.min(1,data[i])); view.setInt16(offset,s<0?s*0x8000:s*0x7FFF,true); offset+=2; }
+    return new Blob([arrayBuffer],{type:'audio/wav'});
   }
-
+  function writeStr(view,offset,str){for(let i=0;i<str.length;i++) view.setUint8(offset+i,str.charCodeAt(i));}
+  function exportFST() { downloadJSON(state.channels.map(ch=>({name:ch.name,type:ch.type,volume:ch.volume,pan:ch.pan,steps:ch.steps,notes:ch.notes})), 'channel_state.fst'); }
+  function exportFSC() {
+    const ch = state.channels[state.selectedChannel]; if(!ch||ch.type==='drum') return alert('Select synth channel.');
+    const midiBytes = createMidiFile(ch.notes, state.bpm); downloadBlob(new Blob([midiBytes],{type:'audio/midi'}), 'score.fsc');
+  }
   function createMidiFile(notes, bpm) {
-    const ticksPerQuarter = 480;
-    const mpb = Math.round(60000000 / bpm);
-    const header = [0x4D, 0x54, 0x68, 0x64, 0, 0, 0, 6, 0, 1, 0, 1, (ticksPerQuarter >> 8) & 0xFF, ticksPerQuarter & 0xFF];
-    let track = [0, 0xFF, 0x51, 3, (mpb >> 16) & 0xFF, (mpb >> 8) & 0xFF, mpb & 0xFF];
-    notes.forEach(n => {
-      const num = Object.keys(NOTE_FREQ).indexOf(n.note) + 24;
-      const startTick = n.start * ticksPerQuarter / 4;
-      const lenTick = n.length * ticksPerQuarter / 4;
+    const ticksPerQuarter=480, mpb = Math.round(60000000/bpm);
+    const header = [0x4D,0x54,0x68,0x64,0,0,0,6,0,1,0,1,(ticksPerQuarter>>8)&0xFF,ticksPerQuarter&0xFF];
+    let track = [0,0xFF,0x51,3,(mpb>>16)&0xFF,(mpb>>8)&0xFF,mpb&0xFF];
+    notes.forEach(n=>{
+      const num = Object.keys(NOTE_FREQ).indexOf(n.note)+24;
+      const startTick = n.start*ticksPerQuarter/4, lenTick = n.length*ticksPerQuarter/4;
       track = track.concat(varLen(startTick), [0x90, num, 100], varLen(lenTick), [0x80, num, 0]);
     });
-    track.push(0, 0xFF, 0x2F, 0);
+    track.push(0,0xFF,0x2F,0);
     const trackLen = track.length;
-    const bytes = [...header, 0x4D, 0x54, 0x72, 0x6B, (trackLen >> 24) & 0xFF, (trackLen >> 16) & 0xFF, (trackLen >> 8) & 0xFF, trackLen & 0xFF, ...track];
+    const bytes = [...header, 0x4D,0x54,0x72,0x6B, (trackLen>>24)&0xFF,(trackLen>>16)&0xFF,(trackLen>>8)&0xFF,trackLen&0xFF, ...track];
     return new Uint8Array(bytes);
   }
-
-  function varLen(v) { const b = []; do { b.unshift(v & 0x7F); v >>= 7; } while (v > 0); for (let i = 0; i < b.length - 1; i++) b[i] |= 0x80; return b; }
-
-  function writeString(view, offset, str) { for (let i = 0; i < str.length; i++) view.setUint8(offset + i, str.charCodeAt(i)); }
-
-  function downloadBlob(blob, name) {
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = name;
-    a.click();
-    URL.revokeObjectURL(url);
+  function varLen(v){ const b=[]; do{b.unshift(v&0x7F); v>>=7;}while(v>0); for(let i=0;i<b.length-1;i++) b[i]|=0x80; return b; }
+  async function exportWAV() {
+    const ctx = new OfflineAudioContext(2, state.ctx.sampleRate*(state.bars*STEPS*60/state.bpm/4), state.ctx.sampleRate);
+    const totalSteps = state.bars*STEPS; const stepDur = 60/state.bpm/4;
+    for(let step=0; step<totalSteps; step++) {
+      const time = step*stepDur;
+      for(let i=0; i<state.channels.length; i++) {
+        const ch = state.channels[i]; if(ch.mute) continue;
+        if(ch.type==='drum' && ch.steps[step%STEPS]) {
+          const g = ctx.createGain(); g.gain.value=ch.volume*0.8; g.connect(ctx.destination);
+          const osc = ctx.createOscillator(); osc.frequency.value=150; osc.connect(g); osc.start(time); osc.stop(time+0.1);
+        }
+      }
+    }
+    const rendered = await ctx.startRendering();
+    downloadBlob(audioBufferToWavBlob(rendered), 'render.wav');
   }
 
-  function saveProject() { exportProject('flp'); }
-
-  function loadProject(file) {
+  // Save / Load project file (user chooses location)
+  function saveProjectFile() {
+    const data = { bpm:state.bpm, bars:state.bars, selectedChannel:state.selectedChannel, channels:state.channels, clips:state.clips, master:state.master };
+    downloadJSON(data, 'ITS_Vermeer_Project.flp');
+    els.saveBtn.textContent='✓ Saved'; setTimeout(()=>els.saveBtn.textContent='💾 Save', 1000);
+  }
+  function loadProjectFile(file) {
     const reader = new FileReader();
-    reader.onload = (e) => {
+    reader.onload = () => {
       try {
-        const data = JSON.parse(e.target.result);
-        state.bpm = data.bpm; state.bars = data.bars;
-        state.channels = data.channels; state.clips = data.clips; state.master = data.master;
-        els.bpm.value = state.bpm; els.bpmVal.textContent = state.bpm; els.bars.value = String(state.bars);
-        rebuildAudioNodes();
-        renderAll();
-      } catch (ex) { alert('Invalid file'); }
+        const data = JSON.parse(reader.result);
+        state.bpm=data.bpm; state.bars=data.bars; state.selectedChannel=data.selectedChannel;
+        state.channels=data.channels; state.clips=data.clips.map(c=>({...c,audioId:c.audioId||null}));
+        state.master=data.master; els.bpm.value=state.bpm; els.bpmVal.textContent=state.bpm; els.bars.value=String(state.bars);
+        rebuildAudioNodes(); renderAll(); els.loadBtn.textContent='✓ Loaded'; setTimeout(()=>els.loadBtn.textContent='📂 Load',1000);
+      } catch(e) { alert('Invalid project file.'); }
     };
     reader.readAsText(file);
   }
 
+  function resetProject() {
+    stopPlayback(true); state.audioBuffers={}; state.channelNodes=[]; initProject(); renderAll();
+  }
+
+  // UI wiring
   function wireUI() {
     els.playBtn.onclick = togglePlay;
     els.stopBtn.onclick = () => stopPlayback(true);
-    els.bpm.oninput = e => { state.bpm = +e.target.value; els.bpmVal.textContent = state.bpm; };
-    els.bars.onchange = e => { state.bars = +e.target.value; stopPlayback(true); };
-    els.addChannelBtn.onclick = () => { state.channels.push(defaultChannel(`Channel ${state.channels.length+1}`, 'synth')); rebuildAudioNodes(); renderAll(); };
-    els.saveBtn.onclick = saveProject;
-    els.loadBtn.onclick = () => {
-      const input = document.createElement('input');
-      input.type = 'file'; input.accept = '.flp,.json';
-      input.onchange = e => { if (e.target.files[0]) loadProject(e.target.files[0]); };
-      input.click();
-    };
-    els.resetBtn.onclick = () => { stopPlayback(true); state.audioBuffers = {}; state.audioFileNames = {}; initProject(); renderAll(); };
+    els.recordBtn.onclick = () => { state.armed=!state.armed; els.recordBtn.classList.toggle('active-toggle',state.armed); els.recordBtn.textContent=state.armed?'● Armed':'● Arm'; };
+    els.bpm.oninput = e => { state.bpm=+e.target.value; els.bpmVal.textContent=state.bpm; };
+    els.bars.onchange = e => { state.bars=+e.target.value; stopPlayback(true); };
+    els.addChannelBtn.onclick = () => { state.channels.push(defaultChannel(`Channel ${state.channels.length+1}`,'synth')); rebuildAudioNodes(); renderAll(); };
+    els.saveBtn.onclick = saveProjectFile;
+    els.loadBtn.onclick = () => els.loadProjectInput.click();
+    els.loadProjectInput.onchange = (e) => { if(e.target.files[0]) loadProjectFile(e.target.files[0]); e.target.value=''; };
+    els.resetBtn.onclick = resetProject;
     els.exportBtn.onclick = () => els.exportModal.classList.add('active');
     els.cancelExport.onclick = () => els.exportModal.classList.remove('active');
     els.confirmExport.onclick = () => {
-      els.exportModal.classList.remove('active');
-      exportProject(els.exportFormat.value);
+      const fmt = els.exportFormat.value; els.exportModal.classList.remove('active');
+      if (fmt==='flp') exportFLP(); else if (fmt==='zip') exportZip(); else if (fmt==='fst') exportFST();
+      else if (fmt==='fsc') exportFSC(); else if (fmt==='wav') exportWAV();
     };
     els.addPatternBtn.onclick = () => {
-      state.clips.push({ id: crypto.randomUUID(), name: `Pattern ${state.clips.length+1}`, type: 'pattern', track: state.selectedChannel, start: 0, length: 4, channel: state.selectedChannel });
+      state.clips.push({ id:crypto.randomUUID(), name:`Pattern ${state.clips.length+1}`, type:'pattern', track:state.selectedChannel, start:0, length:4, channel:state.selectedChannel, audioId:null });
       renderAll();
     };
-    els.importAudioBtn.onclick = () => els.audioFileInput.click();
-    els.audioFileInput.onchange = e => { if (e.target.files[0]) importAudioFile(e.target.files[0]); e.target.value=''; };
+    els.addAudioBtn.onclick = () => els.audioFileInput.click();
+    els.audioFileInput.onchange = (e) => { if(e.target.files[0]) importAudioFile(e.target.files[0]); e.target.value=''; };
     els.importMidiBtn.onclick = () => els.midiFileInput.click();
-    els.midiFileInput.onchange = e => {
-      if (!e.target.files[0]) return;
-      const ch = state.channels[state.selectedChannel];
-      if (!ch || ch.type === 'drum') return alert('Select a synth channel.');
-      ch.notes = [{ id: crypto.randomUUID(), start: 0, length: 2, note: 'C4' }, { id: crypto.randomUUID(), start: 4, length: 2, note: 'E4' }];
-      renderAll();
-    };
-    document.querySelectorAll('.tab').forEach(tab => {
-      tab.onclick = () => {
-        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-        tab.classList.add('active');
-        document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-        document.getElementById(tab.dataset.view).classList.add('active');
-      };
+    els.midiFileInput.onchange = (e) => { if(e.target.files[0]) importMidiFile(e.target.files[0]); e.target.value=''; };
+    els.tabs.forEach(tab => tab.onclick = () => showView(tab.dataset.view));
+    els.browser.addEventListener('click', (e) => {
+      const item = e.target.closest('.item'); if(!item) return;
+      if (item.dataset.type==='channel') {
+        const isDrum = ['Kick','Snare','Hi-Hat'].includes(item.dataset.name);
+        state.channels.push(defaultChannel(item.dataset.name, isDrum?'drum':'synth'));
+        rebuildAudioNodes(); renderAll();
+      }
     });
-    els.browser.addEventListener('click', e => {
-      const item = e.target.closest('.item');
-      if (!item) return;
-      const name = item.dataset.name;
-      const isDrum = ['Kick', 'Snare', 'Hi-Hat'].includes(name);
-      state.channels.push(defaultChannel(name, isDrum ? 'drum' : 'synth'));
-      rebuildAudioNodes();
-      renderAll();
-    });
-    document.getElementById('clearNotesBtn').onclick = () => {
-      const ch = state.channels[state.selectedChannel];
-      if (ch) { ch.notes = []; renderAll(); }
-    };
     document.getElementById('quantizeBtn').onclick = () => {
-      const ch = state.channels[state.selectedChannel];
-      if (!ch || ch.type === 'drum') return;
-      ch.notes.forEach(n => { n.start = Math.round(n.start); n.length = Math.max(1, Math.round(n.length)); });
-      renderAll();
+      const ch = state.channels[state.selectedChannel]; if(!ch||ch.type==='drum') return;
+      ch.notes.forEach(n=>{ n.start=Math.round(n.start); n.length=Math.max(1,Math.round(n.length)); });
+      renderAll(false);
     };
-    window.addEventListener('keydown', e => {
-      if (e.code === 'Space' && !/input|textarea/i.test(e.target.tagName)) { e.preventDefault(); togglePlay(); }
-      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's') { e.preventDefault(); saveProject(); }
+    document.getElementById('clearNotesBtn').onclick = () => {
+      const ch = state.channels[state.selectedChannel]; if(ch) ch.notes=[]; renderAll(false);
+    };
+    window.addEventListener('keydown', (e) => {
+      if (e.code==='Space' && !/input|textarea|select/i.test(e.target.tagName)) { e.preventDefault(); togglePlay(); }
+      if ((e.ctrlKey||e.metaKey) && e.key.toLowerCase()==='s') { e.preventDefault(); saveProjectFile(); }
     });
   }
 
-  function escapeHtml(s) { return String(s).replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[m]); }
+  // Init
+  function initAudioOnInteraction() {
+    const handler = () => { ensureAudio(); document.removeEventListener('click',handler); document.removeEventListener('keydown',handler); };
+    document.addEventListener('click', handler, {once:true}); document.addEventListener('keydown', handler, {once:true});
+  }
 
   initProject();
   wireUI();
   renderAll();
-  const unlock = () => { ensureAudio(); document.removeEventListener('click', unlock); };
-  document.addEventListener('click', unlock);
+  initAudioOnInteraction();
+  console.log('🎵 ITS.Vermeer Studio ready.');
 })();
 </script>
 </body>
